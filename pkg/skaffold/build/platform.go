@@ -42,11 +42,28 @@ func SupportsMultiPlatformBuild(a latest.Artifact) bool {
 }
 
 func CreateMultiPlatformImage(ctx context.Context, out io.Writer, a *latest.Artifact, tag string, matcher platform.Matcher, ab ArtifactBuilder) (string, error) {
+	var imageID string
+	var err error
+	if a.KanikoArtifact != nil && a.KanikoArtifact.NoPush {
+		for _, p := range matcher.Platforms {
+			m := platform.Matcher{
+				All:       false,
+				Platforms: []specs.Platform{p},
+			}
+			tagWithPlatform := fmt.Sprintf("%s_%s", tag, strings.ReplaceAll(platform.Format(p), "/", "_"))
+			imageID, err = ab(ctx, out, a, tagWithPlatform, m)
+		}
+		a.KanikoArtifact = nil
+	}
 	images, err := buildImageForPlatforms(ctx, out, a, tag, matcher, ab)
 	if err != nil {
+		fmt.Println("11111")
 		return "", err
 	}
-
+	if len(images) == 0 {
+		fmt.Println("22222")
+		return imageID, err
+	}
 	return docker.CreateManifestList(ctx, images, tag)
 }
 
@@ -62,6 +79,7 @@ func buildImageForPlatforms(ctx context.Context, out io.Writer, a *latest.Artifa
 		imageID, err := ab(ctx, out, a, tagWithPlatform, m)
 
 		if err != nil {
+			fmt.Println("33333")
 			return nil, err
 		}
 

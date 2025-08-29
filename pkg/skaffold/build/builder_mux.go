@@ -107,11 +107,7 @@ func (b *BuilderMux) Build(ctx context.Context, out io.Writer, tags tag.ImageTag
 		var built string
 
 		if platforms.IsMultiPlatform() && !SupportsMultiPlatformBuild(*artifact) {
-			if artifact.KanikoArtifact != nil && artifact.KanikoArtifact.NoPush {
-				built, err = artifactBuilder(ctx, out, artifact, tag, platforms)
-			} else {
-				built, err = CreateMultiPlatformImage(ctx, out, artifact, tag, platforms, artifactBuilder)
-			}
+			built, err = CreateMultiPlatformImage(ctx, out, artifact, tag, platforms, artifactBuilder)
 		} else {
 			built, err = artifactBuilder(ctx, out, artifact, tag, platforms)
 		}

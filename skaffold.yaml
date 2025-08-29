@@ -4,7 +4,7 @@ kind: Config
 build:
   tagPolicy:
     envTemplate:
-      template: "v4beta14-alpha"
+      template: "v4beta14-beta"
   artifacts:
   - image: registry.deleo.co.kr/fork/skaffold
     context: .
