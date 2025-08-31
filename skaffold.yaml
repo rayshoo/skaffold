@@ -1,0 +1,37 @@
+---
+apiVersion: skaffold/v4beta13
+kind: Config
+build:
+  tagPolicy:
+    envTemplate:
+      template: v4beta13-custom
+  artifacts:
+  - image: registry.deleo.co.kr/fork/skaffold
+    context: .
+    platforms:
+    - linux/amd64
+    - linux/arm64
+    kaniko:
+      cleanup: true
+      useNewRun: true
+      dockerfile: deploy/skaffold/Dockerfile.alpine
+      context: '.'
+      snapshotMode: redo
+      cache:
+        repo: cache.deleo.co.kr/fork/skaffold
+        ttl: 24h
+  cluster:
+    namespace: test
+    dockerConfig:
+      secretName: test
+    tolerations:
+    - effect: NoSchedule
+      key: karpenter/node.ndp
+      operator: Equal
+      value: on-demand
+    nodeSelector:
+      node: ndp
+    resources:
+      limits:
+        cpu: 2
+        memory: 4G
