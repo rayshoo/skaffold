@@ -26,11 +26,10 @@ build:
       secretName: test
     tolerations:
     - effect: NoSchedule
-      key: karpenter/node.ndp
-      operator: Equal
-      value: on-demand
+      key: karpenter/node.build
+      operator: Exists
     nodeSelector:
-      node: ndp
+      node: build
     resources:
       limits:
         cpu: 2

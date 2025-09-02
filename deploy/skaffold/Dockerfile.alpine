@@ -24,7 +24,8 @@ RUN make clean out/skaffold VERSION=$VERSION \
  && rm -rf secrets $SECRET
 
 FROM alpine:3.20 AS release
-RUN apk add --no-cache tar gzip ca-certificates
+LABEL maintainer="chan <bcchoi@deleo.co.kr>"
+RUN apk add --no-cache tar gzip ca-certificates kubectl
 COPY --from=builder /usr/bin/skaffold /usr/bin/skaffold
 COPY --from=build /usr/local/bin/kubectl /usr/local/bin/kubectl
 ENV SSL_CERT_DIR=/etc/ssl/certs SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
